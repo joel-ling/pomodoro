@@ -1,0 +1,10 @@
+account: Team meetings
+description: Weekly team meeting
+distribution:
+  type: Discrete
+  dates:
+    - 2022-12-25
+    - 2023-01-01
+effort:
+  type: Absolute
+  value: 1.0
