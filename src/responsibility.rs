@@ -4,24 +4,24 @@ use serde_yaml::from_str;
 
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(tag = "type")]
-enum Distribution {
+pub enum Distribution {
     Continuous { alpha: NaiveDate, omega: NaiveDate },
     Discrete { dates: Vec<NaiveDate> },
 }
 
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(tag = "type", content = "value")]
-enum Effort {
+pub enum Effort {
     Absolute(f64),
     Relative(f64),
 }
 
 #[derive(Debug, Deserialize, PartialEq)]
-struct Responsibility {
-    account: String,
-    description: String,
-    distribution: Distribution,
-    effort: Effort,
+pub struct Responsibility {
+    pub account: String,
+    pub description: String,
+    pub distribution: Distribution,
+    pub effort: Effort,
 }
 
 #[cfg(test)]

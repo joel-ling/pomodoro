@@ -1,0 +1,9 @@
+account: Non-billable tasks
+description: Prepare timesheet
+distribution:
+  type: Discrete
+  dates:
+    - 2023-01-01
+effort:
+  type: Relative
+  value: 1.0
