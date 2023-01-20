@@ -7,13 +7,13 @@ use chrono::naive::NaiveDate;
 use serde_yaml::from_str;
 
 #[derive(Debug, PartialEq)]
-struct DayAtWork<'a> {
+pub struct DayAtWork<'a> {
     activities: Vec<Activity<'a>>,
     date: NaiveDate,
 }
 
 impl<'a> DayAtWork<'a> {
-    fn from(
+    pub fn new(
         date: NaiveDate,
         tot_abs_eff: f64,
         responsibilities: &Vec<Responsibility>,
@@ -81,7 +81,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn from() {
+    fn new() {
         let account0 = String::from("Team meetings");
         let account1 = String::from("Non-billable tasks");
 
@@ -112,7 +112,7 @@ mod tests {
         let responsibilities: Vec<Responsibility> =
             vec![from_str(yaml_abs).unwrap(), from_str(yaml_rel).unwrap()];
 
-        let actual = DayAtWork::from(date, 8.0, &responsibilities);
+        let actual = DayAtWork::new(date, 8.0, &responsibilities);
 
         assert_eq!(actual, expected);
     }
