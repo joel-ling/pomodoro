@@ -29,7 +29,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn deserialise_responsibility() {
+    fn deserialise() {
         let expected = Responsibility {
             account: String::from("Team meetings"),
             description: String::from("Weekly team meeting"),
@@ -42,8 +42,9 @@ mod tests {
             effort: Effort::Absolute(1.0),
         };
 
-        let actual: Responsibility;
-        actual = from_str(include_str!("test_responsibility.yml")).unwrap();
+        let yaml: &str = include_str!("test_responsibility_absolute.yml");
+
+        let actual: Responsibility = from_str(yaml).unwrap();
 
         assert_eq!(actual, expected);
     }

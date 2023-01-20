@@ -35,7 +35,7 @@ mod tests {
         };
 
         let r: Responsibility;
-        r = from_str(include_str!("test_responsibility.yml")).unwrap();
+        r = from_str(include_str!("test_responsibility_absolute.yml")).unwrap();
 
         let actual = Activity::from(&r, 0.0, 0.0);
 
