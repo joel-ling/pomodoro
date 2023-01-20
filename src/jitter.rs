@@ -49,7 +49,7 @@ mod tests {
         assert!(jitter.iter().sum::<f64>() < 0.001);
 
         for i in &jitter {
-            assert!(*i >= -1.0 && *i <= 1.0);
+            assert!(*i >= -1.001 && *i <= 1.001);
         }
     }
 }

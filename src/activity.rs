@@ -9,24 +9,40 @@ pub struct Activity<'a> {
 }
 
 impl<'a> Activity<'a> {
-    pub fn from(r: &Responsibility, tot_rel_eff: f64, bal_abs_eff: f64, jitter: f64) -> Activity {
-        let absolute_effort: f64 = match r.effort {
+    pub fn from(
+        r: &Responsibility,
+        tot_rel_eff: f64,
+        bal_abs_eff: f64,
+        jitter: f64,
+        resolution: f64,
+    ) -> Activity {
+        let abs_effort: f64 = match r.effort {
             Effort::Absolute(effort) => effort,
             Effort::Relative(effort) => (effort + jitter) / tot_rel_eff * bal_abs_eff,
         };
 
+        let abs_effort_rounded: f64;
+
+        let unwanted_precision = abs_effort % resolution;
+
+        if unwanted_precision < resolution * 0.5 {
+            abs_effort_rounded = abs_effort - unwanted_precision;
+        } else {
+            abs_effort_rounded = abs_effort + (resolution - unwanted_precision);
+        }
+
         Activity {
             account: &r.account,
             description: &r.description,
-            absolute_effort: absolute_effort,
+            absolute_effort: abs_effort_rounded,
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use serde_yaml::from_str;
     use super::*;
+    use serde_yaml::from_str;
 
     #[test]
     fn from_absolute() {
@@ -39,7 +55,7 @@ mod tests {
         let r: Responsibility;
         r = from_str(include_str!("test_responsibility_absolute.yml")).unwrap();
 
-        let actual = Activity::from(&r, 0.0, 0.0, 0.0);
+        let actual = Activity::from(&r, 0.0, 0.0, 0.0, 0.25);
 
         assert_eq!(actual, expected);
     }
@@ -55,7 +71,7 @@ mod tests {
         let r: Responsibility;
         r = from_str(include_str!("test_responsibility_relative.yml")).unwrap();
 
-        let actual = Activity::from(&r, 2.0, 6.0, 0.0);
+        let actual = Activity::from(&r, 2.0, 6.0, 0.0, 0.25);
 
         assert_eq!(actual, expected);
     }

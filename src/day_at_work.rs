@@ -9,17 +9,20 @@ use chrono::naive::NaiveDate;
 pub struct DayAtWork<'a> {
     activities: Vec<Activity<'a>>,
     date: NaiveDate,
+    total_effort: f64,
 }
 
 impl<'a> DayAtWork<'a> {
     pub fn new(
         date: NaiveDate,
         tot_abs_eff: f64,
+        resolution: f64,
         responsibilities: &Vec<Responsibility>,
     ) -> DayAtWork {
         let mut day = DayAtWork {
             activities: Vec::new(),
             date: date,
+            total_effort: 0.0,
         };
 
         let mut relevant: Vec<&Responsibility> = Vec::new();
@@ -60,7 +63,7 @@ impl<'a> DayAtWork<'a> {
         let mut effort_jitter: Vec<f64> = jitter(&jitter_source);
 
         for r in relevant {
-            day.activities.push(Activity::from(
+            let activity = Activity::from(
                 r,
                 tot_rel_eff,
                 bal_abs_eff,
@@ -68,7 +71,12 @@ impl<'a> DayAtWork<'a> {
                     Effort::Absolute(_) => 0.0,
                     Effort::Relative(_) => effort_jitter.pop().unwrap(),
                 },
-            ));
+                resolution,
+            );
+
+            day.total_effort += activity.absolute_effort;
+
+            day.activities.push(activity);
         }
 
         day
@@ -104,6 +112,7 @@ mod tests {
                 },
             ],
             date: date.clone(),
+            total_effort: 8.0,
         };
 
         let yaml_abs: &str = include_str!("test_responsibility_absolute.yml");
@@ -112,7 +121,7 @@ mod tests {
         let responsibilities: Vec<Responsibility> =
             vec![from_str(yaml_abs).unwrap(), from_str(yaml_rel).unwrap()];
 
-        let actual = DayAtWork::new(date, 8.0, &responsibilities);
+        let actual = DayAtWork::new(date, 8.0, 0.25, &responsibilities);
 
         assert_eq!(actual, expected);
     }
