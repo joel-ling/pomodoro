@@ -1,6 +1,5 @@
 use crate::responsibility::Effort;
 use crate::responsibility::Responsibility;
-use serde_yaml::from_str;
 
 #[derive(Debug, PartialEq)]
 pub struct Activity<'a> {
@@ -26,6 +25,7 @@ impl<'a> Activity<'a> {
 
 #[cfg(test)]
 mod tests {
+    use serde_yaml::from_str;
     use super::*;
 
     #[test]

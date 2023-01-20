@@ -4,7 +4,6 @@ use crate::responsibility::Distribution;
 use crate::responsibility::Effort;
 use crate::responsibility::Responsibility;
 use chrono::naive::NaiveDate;
-use serde_yaml::from_str;
 
 #[derive(Debug, PartialEq)]
 pub struct DayAtWork<'a> {
@@ -79,6 +78,7 @@ impl<'a> DayAtWork<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_yaml::from_str;
 
     #[test]
     fn new() {

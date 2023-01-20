@@ -1,6 +1,5 @@
 use chrono::naive::NaiveDate;
 use serde::Deserialize;
-use serde_yaml::from_str;
 
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(tag = "type")]
@@ -27,6 +26,7 @@ pub struct Responsibility {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use serde_yaml::from_str;
 
     #[test]
     fn deserialise() {
