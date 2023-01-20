@@ -1,4 +1,5 @@
 use crate::activity::Activity;
+use crate::jitter::jitter;
 use crate::responsibility::Distribution;
 use crate::responsibility::Effort;
 use crate::responsibility::Responsibility;
@@ -44,16 +45,31 @@ impl<'a> DayAtWork<'a> {
         let mut tot_rel_eff: f64 = 0.0;
         let mut bal_abs_eff: f64 = tot_abs_eff;
 
+        let mut jitter_source: Vec<f64> = Vec::new();
+
         for r in &relevant {
             match r.effort {
                 Effort::Absolute(effort) => bal_abs_eff -= effort,
-                Effort::Relative(effort) => tot_rel_eff += effort,
+                Effort::Relative(effort) => {
+                    tot_rel_eff += effort;
+
+                    jitter_source.push(effort);
+                }
             }
         }
 
-        for r in &relevant {
-            day.activities
-                .push(Activity::from(r, tot_rel_eff, bal_abs_eff));
+        let mut effort_jitter: Vec<f64> = jitter(&jitter_source);
+
+        for r in relevant {
+            day.activities.push(Activity::from(
+                r,
+                tot_rel_eff,
+                bal_abs_eff,
+                match r.effort {
+                    Effort::Absolute(_) => 0.0,
+                    Effort::Relative(_) => effort_jitter.pop().unwrap(),
+                },
+            ));
         }
 
         day

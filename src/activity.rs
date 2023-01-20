@@ -10,14 +10,16 @@ pub struct Activity<'a> {
 }
 
 impl<'a> Activity<'a> {
-    pub fn from(r: &Responsibility, tot_rel_eff: f64, bal_abs_eff: f64) -> Activity {
+    pub fn from(r: &Responsibility, tot_rel_eff: f64, bal_abs_eff: f64, jitter: f64) -> Activity {
+        let absolute_effort: f64 = match r.effort {
+            Effort::Absolute(effort) => effort,
+            Effort::Relative(effort) => (effort + jitter) / tot_rel_eff * bal_abs_eff,
+        };
+
         Activity {
             account: &r.account,
             description: &r.description,
-            absolute_effort: match r.effort {
-                Effort::Absolute(effort) => effort,
-                Effort::Relative(effort) => effort / tot_rel_eff * bal_abs_eff,
-            },
+            absolute_effort: absolute_effort,
         }
     }
 }
@@ -37,7 +39,7 @@ mod tests {
         let r: Responsibility;
         r = from_str(include_str!("test_responsibility_absolute.yml")).unwrap();
 
-        let actual = Activity::from(&r, 0.0, 0.0);
+        let actual = Activity::from(&r, 0.0, 0.0, 0.0);
 
         assert_eq!(actual, expected);
     }
@@ -53,7 +55,7 @@ mod tests {
         let r: Responsibility;
         r = from_str(include_str!("test_responsibility_relative.yml")).unwrap();
 
-        let actual = Activity::from(&r, 2.0, 6.0);
+        let actual = Activity::from(&r, 2.0, 6.0, 0.0);
 
         assert_eq!(actual, expected);
     }
