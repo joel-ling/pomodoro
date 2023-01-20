@@ -3,14 +3,14 @@ use crate::responsibility::Responsibility;
 use serde_yaml::from_str;
 
 #[derive(Debug, PartialEq)]
-struct Activity<'a> {
-    account: &'a String,
-    description: &'a String,
-    absolute_effort: f64,
+pub struct Activity<'a> {
+    pub account: &'a String,
+    pub description: &'a String,
+    pub absolute_effort: f64,
 }
 
 impl<'a> Activity<'a> {
-    fn from(r: &Responsibility, tot_rel_eff: f64, bal_abs_eff: f64) -> Activity {
+    pub fn from(r: &Responsibility, tot_rel_eff: f64, bal_abs_eff: f64) -> Activity {
         Activity {
             account: &r.account,
             description: &r.description,
