@@ -23,12 +23,12 @@ impl<'a> Activity<'a> {
 
         let abs_effort_rounded: f64;
 
-        let unwanted_precision = abs_effort % resolution;
+        let excess_precision = abs_effort % resolution;
 
-        if unwanted_precision < resolution * 0.5 {
-            abs_effort_rounded = abs_effort - unwanted_precision;
+        if excess_precision < resolution * 0.5 {
+            abs_effort_rounded = abs_effort - excess_precision;
         } else {
-            abs_effort_rounded = abs_effort + (resolution - unwanted_precision);
+            abs_effort_rounded = abs_effort + (resolution - excess_precision);
         }
 
         Activity {
