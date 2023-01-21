@@ -79,6 +79,10 @@ impl<'a> DayAtWork<'a> {
             day.activities.push(activity);
         }
 
+        if day.total_effort != tot_abs_eff {
+            return DayAtWork::new(date, tot_abs_eff, resolution, responsibilities);
+        }
+
         day
     }
 }
