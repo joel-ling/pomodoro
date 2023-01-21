@@ -3,10 +3,10 @@ use rand::distributions::Distribution;
 use rand::rngs::ThreadRng;
 
 pub fn jitter(source: &Vec<f64>) -> Vec<f64> {
-    let mut jitter: Vec<f64> = Vec::new();
+    let mut output: Vec<f64> = Vec::new();
 
     if source.len() == 0 {
-        return jitter;
+        return output;
     }
 
     let compare = |a: &&f64, b: &&f64| a.partial_cmp(b).unwrap();
@@ -22,18 +22,26 @@ pub fn jitter(source: &Vec<f64>) -> Vec<f64> {
     let mut generator = ThreadRng::default();
 
     for _ in 0..source.len() {
-        jitter.push(distribution.sample(&mut generator));
+        output.push(distribution.sample(&mut generator));
     }
 
-    let discrepancy: f64 = jitter.iter().sum();
+    let discrepancy: f64 = output.iter().sum();
 
     let correction: f64 = discrepancy / source.len() as f64;
 
     for i in 0..source.len() {
-        jitter[i] -= correction;
+        output[i] -= correction;
+        // XXX: probability of correction resulting in output exceeding range
+        // is non-zero, necessitating fix below
+
+        if output[i] < -1.0 * min || output[i] > min {
+            return jitter(source);
+            // XXX: discarding of undesirable output probably distorts
+            // distribution of random numbers
+        }
     }
 
-    jitter
+    output
 }
 
 #[cfg(test)]
@@ -49,7 +57,7 @@ mod tests {
         assert!(jitter.iter().sum::<f64>() < 0.001);
 
         for i in &jitter {
-            assert!(*i >= -1.001 && *i <= 1.001);
+            assert!(*i >= -1.0 && *i <= 1.0);
         }
     }
 }
